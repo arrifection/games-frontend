@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+motor
+dnspython
+python-dotenv
+certifi
+pydantic[email]
+email-validator
+pyjwt
+passlib[bcrypt]
+python-multipart
+python-jose[cryptography]
