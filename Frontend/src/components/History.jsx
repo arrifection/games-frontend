@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 const History = ({ onBack }) => {
@@ -10,7 +10,7 @@ const History = ({ onBack }) => {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const res = await axios.get("http://localhost:8000/history/list");
+                const res = await api.get("/history/list");
                 setHistory(res.data);
             } catch (err) {
                 console.error("Failed to fetch history", err);
@@ -71,8 +71,8 @@ const History = ({ onBack }) => {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-3">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${entry.activity_type.includes("BMI") ? "bg-blue-50 text-blue-600" :
-                                                entry.activity_type.includes("Macros") ? "bg-emerald-50 text-emerald-600" :
-                                                    "bg-purple-50 text-purple-600"
+                                            entry.activity_type.includes("Macros") ? "bg-emerald-50 text-emerald-600" :
+                                                "bg-purple-50 text-purple-600"
                                             }`}>
                                             {entry.activity_type}
                                         </span>

@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 const AuthContext = createContext();
-
-// Base URL for API
-const API_URL = "http://localhost:8000"; // Adjust if needed
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -13,17 +10,17 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (token) {
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             fetchUser();
         } else {
-            delete axios.defaults.headers.common["Authorization"];
+            delete api.defaults.headers.common["Authorization"];
             setLoading(false);
         }
     }, [token]);
 
     const fetchUser = async () => {
         try {
-            const res = await axios.get(`${API_URL}/auth/me`);
+            const res = await api.get("/auth/me");
             setUser(res.data);
         } catch (err) {
             console.error("Failed to fetch user", err);
@@ -35,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const res = await axios.post(`${API_URL}/auth/login`, { email, password });
+            const res = await api.post("/auth/login", { email, password });
             const { access_token, username, email: userEmail } = res.data;
             localStorage.setItem("token", access_token);
             setToken(access_token);
@@ -51,7 +48,7 @@ export const AuthProvider = ({ children }) => {
 
     const signup = async (username, email, password) => {
         try {
-            await axios.post(`${API_URL}/auth/register`, { username, email, password });
+            await api.post("/auth/register", { username, email, password });
             return await login(email, password);
         } catch (err) {
             return {
@@ -65,13 +62,13 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token");
         setToken(null);
         setUser(null);
-        delete axios.defaults.headers.common["Authorization"];
+        delete api.defaults.headers.common["Authorization"];
     };
 
     const saveHistory = async (activityType, inputData, outputResult) => {
         if (!user) return;
         try {
-            await axios.post(`${API_URL}/history/add`, {
+            await api.post("/history/add", {
                 activity_type: activityType,
                 input_data: inputData,
                 output_result: outputResult
